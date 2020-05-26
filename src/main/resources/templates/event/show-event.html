@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head th:include="fragments.html :: headFragment">
+    <title id="pageTitle">Event details</title>
+    <link type="text/css" rel="stylesheet" href="/css/dist/bootstrap.min.css"/>
+</head>
+<body>
+<header th:insert="fragments.html :: navFragment"></header>
+<input type="hidden" id="csrfToken" th:value="${_csrf.token}"/>
+<input type="hidden" id="csrfHeader" th:value="${_csrf.headerName}"/>
+
+<div class="container" style="width:920px;margin: 24px auto;padding: 24px;">
+    <div class="card">
+        <div class="card-body">
+            <div style="display:flex; align-items: start; justify-content: space-between">
+                <h2 class="card-title font-weight-bold" th:text="${event.title}"></h2>
+                <div sec:authorize="hasRole('ADMIN')" style="margin-left: auto">
+                    <a th:href="@{'/events/edit/' + ${event.id}}" class="btn btn-warning" id="edit-event">Edit</a>
+                    <button class="btn btn-danger" id="delete-event" th:value="${event.id}" >Delete</button>
+                </div>
+            </div>
+            <div class="card-block" style="padding: 24px;">
+                <fieldset>
+                    <p th:text="'Calendar: ' + ${calendar.name}"></p>
+                    <p th:text="'Type: ' + ${event.type}"></p>
+                    <p th:text="'Importance: ' + ${event.importanceLvl}"></p>
+                    <p th:text="'Location: ' + ${event.location}"></p>
+                    <br>
+                    <div class="d-flex justify-content-between">
+                        <div><b th:text="'Starts at: ' + ${#temporals.format(event.startDate, 'yyyy-MM-dd HH:mm')}"></b></div>
+                        <div><b th:text="'Ends at: ' + ${#temporals.format(event.endDate, 'yyyy-MM-dd HH:mm')}"></b></div>
+                    </div>
+                    <br>
+                    <p th:text="'Attendees: ' + ${attendees.size()} "></p>
+                    <ul class="list-group" th:each="attende : ${attendees}">
+                        <li class="list-group-item" th:text="${attende.displayName}"></li>
+                    </ul>
+                    <br>
+                    <p th:text="'Description: '"></p>
+                    <div class="card-text" th:text="${event.description}"></div>
+                </fieldset>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="/js/dist/jquery-3.4.1.min.js"></script>
+<script type="text/javascript" src="/js/dist/bootstrap.min.js"></script>
+<script type="text/javascript" src="/js/show-event.js"></script>
+</body>
+</html>

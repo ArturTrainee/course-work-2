@@ -1,0 +1,2 @@
+INSERT INTO "user" (id, username, password, display_name, email, roles, department, enabled)
+VALUES (0, 'admin', '$2y$10$eR6GGY6jwOb38Skjw0sJ5O2WDm4D4gjxp2bh/vcEbh7NGSpKesZmy', 'Main Secretary', 'official-mail@gmail.com', 'USER', 'Management', true);

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:include="fragments.html :: headFragment">
+    <title id="pageTitle">Events List</title>
+    <link type="text/css" rel="stylesheet" href="/css/dist/bootstrap.min.css"/>
+</head>
+<body>
+<header th:insert="fragments.html :: navFragment"></header>
+<input type="hidden" id="csrfToken" th:value="${_csrf.token}"/>
+<input type="hidden" id="csrfHeader" th:value="${_csrf.headerName}"/>
+
+<div class="container" style="max-width: 1400px">
+    <div class="row">
+        <div class="col-lg-3" style="min-height: 400px;max-width: 270px;">
+            <h4 class="my-4">Search in Calendars:</h4>
+            <table class="form-check">
+                <tr>
+                    <td>
+                        <input type="checkbox" id="select-all-calendars" value="all" class="form-check-input" checked/>
+                        <h5 class="form-check-label">Select All</h5>
+                    </td>
+                </tr>
+                <tr th:each="calendar : ${calendars}" th:id="'cal-' + ${calendar.id}">
+                    <td>
+                        <input type="checkbox" th:value="${calendar.id}" class="form-check-input cal-checkbox" checked/>
+                        <label th:text="${calendar.name}" class="form-check-label"></label>
+                    </td>
+                </tr>
+            </table>
+
+            <div class="period-picker">
+                <h4 style="margin-top: 10px; margin-bottom: 0"><label for="from-date">From</label></h4>
+                <input th:value="${#temporals.createToday()}"
+                       type="text"
+                       id="from-date"
+                       class="form-control datepicker"
+                       placeholder="dd-MM-yyyy">
+
+                <h4 style="margin-top: 10px; margin-bottom: 0"><label for="to-date">To</label></h4>
+                <input th:value="${#temporals.createToday()}"
+                       type="text"
+                       id="to-date"
+                       class="form-control datepicker"
+                       placeholder="dd-MM-yyyy">
+            </div>
+
+            <div class="btn-group" role="group" aria-label="nested dropdown" style="margin-top: 20px;">
+                <div class="btn-group" role="group">
+                    <button id="btnGroupDrop1" type="button" class="btn btn-success dropdown-toggle"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                            style="max-width: 100px;max-height: 40px;">
+                        Save as
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                        <a class="dropdown-item" id="save-pdf-btn" style="cursor: pointer">PDF</a>
+                        <a class="dropdown-item" id="save-docx-btn" style="cursor: pointer">DOCX</a>
+                        <a class="dropdown-item" id="save-xlsx-btn" style="cursor: pointer">XLSX</a>
+                    </div>
+                </div>
+            </div>
+
+            <h4 class="my-4">Search by Attendee:</h4>
+            <table class="form-check">
+                <tr>
+                    <td>
+                        <input type="checkbox" id="select-all-attendees" value="all" class="form-check-input" checked/>
+                        <h5 class="form-check-label">Select All</h5>
+                    </td>
+                </tr>
+                <tr th:each="attendee : ${attendees}" th:id="'attendee-' + ${attendee.id}">
+                    <td>
+                        <input type="checkbox" th:value="${attendee.id}" class="form-check-input att-checkbox" checked/>
+                        <label th:text="${attendee.displayName}" class="form-check-label"></label>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="col-lg-9">
+            <div class="input-group" style="margin-top: 20px;margin-bottom: 20px;">
+                <input class="form-control" id="tableSearch" type="text" name="" placeholder="Enter event keywords">
+                <div class="input-group-append">
+                    <button class="btn btn-success" type="button" id="search-btn">Search</button>
+                </div>
+            </div>
+            <table class="table table-bordered table-striped">
+                <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Location</th>
+                </tr>
+                </thead>
+                <tbody id="searchTable">
+                <tr th:each="event : ${events}" th:id="'event-' + ${event.id}" th:class="'event-row cal-' + ${event.calendarId}">
+                    <td>
+                        <a th:href="@{'/events/show/' + ${event.id}}" target="_blank">[[${event.title}]]</a>
+                    </td>
+                    <td th:text="${#temporals.format(event.startDate, 'dd-MM-yyyy HH:mm')}">
+                    <td th:text="${#temporals.format(event.endDate, 'dd-MM-yyyy HH:mm')}">
+                    <td th:text="${event.location}">
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<a th:insert="fragments.html :: addEventBtn"></a>
+
+<script type="text/javascript" src="/js/dist/jquery-3.4.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+<script type="text/javascript" src="/js/dist/bootstrap.min.js"></script>
+<script type="text/javascript" src="/js/events-config.js"></script>
+</body>
+</html>

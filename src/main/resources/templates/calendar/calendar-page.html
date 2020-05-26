@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+    <link type="text/css" rel="stylesheet" href="/css/dist/bootstrap.min.css"/>
+    <link rel="apple-touch-icon" sizes="57x57" href="/img/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/img/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/img/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/img/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/img/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/img/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/img/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/img/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/img/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/img/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/img/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon-16x16.png">
+    <link rel="manifest" href="/img/manifest.json">
+    <title>Calendar</title>
+    <link type="text/css" rel="stylesheet" href="/css/dist/bootstrap.min.css"/>
+    <link type="text/css" rel="stylesheet" href="/css/dist/tui-date-picker.min.css"/>
+    <link type="text/css" rel="stylesheet" href="/css/dist/tui-time-picker.min.css"/>
+    <link type="text/css" rel="stylesheet" href="/css/dist/tui-calendar.min.css"/>
+    <link type="text/css" rel="stylesheet" href="/css/calendar.css"/>
+</head>
+<body>
+<header th:insert="fragments.html :: navFragment"></header>
+<input type="hidden" id="csrfToken" th:value="${_csrf.token}"/>
+<input type="hidden" id="csrfHeader" th:value="${_csrf.headerName}"/>
+
+<div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title"><span id="ErrorDescription"></span></h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="lnb">
+    <div sec:authorize="hasRole('ADMIN')" class="lnb-new-schedule">
+        <button id="btn-create-calendar" type="button" class="btn btn-default btn-block lnb-new-schedule-btn"
+                data-toggle="modal"> New calendar
+        </button>
+    </div>
+    <div sec:authorize="hasRole('ADMIN')" class="modal fade" id="createCalModal" tabindex="-1" role="dialog"
+         aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">Create new calendar</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <label for="cal-name">Calendar name: </label>
+                    <input class="form-control" name="cal-name" id="cal-name" type="text" required/>
+                    <br>
+                    <label for="text-color">Calendar text color: </label>
+                    <input name="text-color" id="text-color" type="color"/>
+                    <br>
+                    <label for="bg-color">Calendar background color: </label>
+                    <input name="bg-color" id="bg-color" type="color"/>
+                </div>
+                <div class="modal-footer">
+                    <input id="btn-save-cal" type="submit" class="btn btn-success" th:value="Create">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div sec:authorize="hasRole('ADMIN')" class="modal fade" id="editCalModal" tabindex="-1" role="dialog"
+         aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="updateModalLabel">Update calendar</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <label for="new-text-color">Calendar text color</label>
+                    <input name="text-color" id="new-text-color" type="color"/>
+                    <br>
+                    <label for="new-bg-color">Calendar background color</label>
+                    <input name="bg-color" id="new-bg-color" type="color"/>
+                </div>
+                <div class="modal-footer">
+                    <input id="btn-update-cal" type="submit" class="btn btn-success" value="Update">
+                    <button id="btn-delete-cal" type="button" class="btn btn-danger" data-dismiss="modal">Remove
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="lnb-calendars" class="lnb-calendars">
+        <div>
+            <div class="lnb-calendars-item">
+                <label>
+                    <input class="tui-full-calendar-checkbox-square" type="checkbox" value="all" checked>
+                    <span></span>
+                    <strong>View all</strong>
+                </label>
+            </div>
+        </div>
+        <div id="calendarList" class="lnb-calendars-d1"></div>
+    </div>
+</div>
+
+<div id="right">
+    <div id="menu">
+          <span class="dropdown">
+              <button id="dropdownMenu-calendarType"
+                      class="btn btn-default btn-sm dropdown-toggle"
+                      type="button"
+                      data-toggle="dropdown"
+                      aria-haspopup="true"
+                      aria-expanded="true">
+                  <i id="calendarTypeIcon" class="calendar-icon ic_view_month" style="margin-right: 4px;"></i>
+                  <span id="calendarTypeName">View</span>&nbsp;
+                  <i class="calendar-icon tui-full-calendar-dropdown-arrow"></i>
+              </button>
+              <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu-calendarType">
+                  <li role="presentation" style="padding: 0;">
+                      <a class="dropdown-menu-title" role="menuitem" data-action="toggle-daily">
+                          <i class="calendar-icon ic_view_day"></i>Daily
+                      </a>
+                  </li>
+                  <li role="presentation" style="padding: 0;">
+                      <a class="dropdown-menu-title" role="menuitem" data-action="toggle-weekly">
+                          <i class="calendar-icon ic_view_week"></i>Weekly
+                      </a>
+                  </li>
+                  <li role="presentation" style="padding: 0;">
+                      <a class="dropdown-menu-title" role="menuitem" data-action="toggle-monthly">
+                          <i class="calendar-icon ic_view_month"></i>Month
+                      </a>
+                  </li>
+                  <li role="presentation" style="padding: 0;">
+                      <a class="dropdown-menu-title" role="menuitem" data-action="toggle-weeks2">
+                          <i class="calendar-icon ic_view_week"></i>2 weeks
+                      </a>
+                  </li>
+                  <li role="presentation" style="padding: 0;">
+                      <a class="dropdown-menu-title" role="menuitem" data-action="toggle-weeks3">
+                          <i class="calendar-icon ic_view_week"></i>3 weeks
+                      </a>
+                  </li>
+                  <li role="presentation" class="dropdown-divider"></li>
+                  <li role="presentation">
+                      <a role="menuitem" data-action="toggle-workweek">
+                          <input type="checkbox" class="tui-full-calendar-checkbox-square" value="toggle-workweek"
+                                 checked>
+                          <span class="checkbox-title"></span>Show weekends
+                      </a>
+                  </li>
+                  <li role="presentation" style="padding: 0;">
+                      <a role="menuitem" data-action="toggle-start-day-1">
+                          <input type="checkbox" class="tui-full-calendar-checkbox-square" value="toggle-start-day-1">
+                          <span class="checkbox-title"></span>Start Week on Monday
+                      </a>
+                  </li>
+                  <li role="presentation">
+                      <a role="menuitem" data-action="toggle-narrow-weekend">
+                          <input type="checkbox" class="tui-full-calendar-checkbox-square"
+                                 value="toggle-narrow-weekend">
+                          <span class="checkbox-title"></span>Narrower than weekdays
+                      </a>
+                  </li>
+              </ul>
+          </span>
+        <span id="menu-navi">
+              <button type="button" class="btn btn-default btn-sm move-today" data-action="move-today">Today</button>
+              <button type="button" class="btn btn-default btn-sm move-day" data-action="move-prev" id="btn-prev">
+              </button>
+              <button type="button" class="btn btn-default btn-sm move-day" data-action="move-next" id="btn-next">
+              </button>
+          </span>
+        <span id="renderRange" class="render-range"></span>
+    </div>
+
+    <div id="calendar"></div>
+</div>
+
+<a th:insert="fragments.html :: addEventBtn"></a>
+
+<script src="/js/dist/jquery-3.4.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+<script src="/js/dist/bootstrap.min.js"></script>
+<script src="/js/dist/tui-code-snippet.js"></script>
+<script src="/js/dist/tui-dom.min.js"></script>
+<script src="/js/dist/tui-time-picker.min.js"></script>
+<script src="/js/dist/tui-date-picker.min.js"></script>
+<script src="/js/dist/moment.js"></script>
+<script src="/js/dist/tui-calendar.min.js"></script>
+<script src="/js/calendar-config.js"></script>
+</body>
+</html>

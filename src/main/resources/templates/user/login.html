@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:include="fragments.html :: headFragment">
+    <title id="pageTitle">Login</title>
+    <link type="text/css" rel="stylesheet" href="/css/dist/bootstrap.min.css"/>
+</head>
+
+<body>
+<div class="container" style="width:600px;margin: 24px auto;padding: 24px;">
+    <div class="card">
+        <div class="card-block" style="padding: 24px;">
+            <form th:action="@{/signin}" method="post">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                <h2 class="card-title">Login Form</h2>
+                <fieldset>
+                    <div th:if="${param.error}" class="alert alert-danger">
+                        <p style="align-items: center; color: red;">Invalid username or password.</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="txtUsername">Username</label>
+                        <input type="text" class="form-control" id="txtUsername" name="txtUsername"
+                               placeholder="Username" autofocus required>
+                    </div>
+                    <div class="form-group">
+                        <label for="txtPassword">Password</label>
+                        <input type="password" class="form-control" id="txtPassword" name="txtPassword"
+                               placeholder="Password" required>
+                    </div>
+                    <div class="form-actions" style="margin-top: 12px;">
+                        <button type="submit" class="btn btn-primary btn-block" style="width: 100%">Log in</button>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+        <div class="card-block" style="padding: 8px;">
+            <p class="text-center"><span>New?&nbsp;</span><a th:href="@{/registration}">Create an Account</a></p>
+        </div>
+    </div>
+</div>
+</body>
+</html>

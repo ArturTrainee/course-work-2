@@ -1,0 +1,46 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("io.spring.javaformat:spring-javaformat-gradle-plugin:0.0.22")
+    }
+}
+
+plugins {
+    id 'org.springframework.boot' version '2.2.5.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+    id 'java'
+    id 'java-library'
+}
+
+apply plugin: 'io.spring.javaformat'
+apply plugin: 'checkstyle'
+
+checkstyle {
+    toolVersion = "8.29"
+}
+
+group 'geekhub-java-for-web'
+version '1.0-SNAPSHOT'
+sourceCompatibility = '11'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web:2.2.5.RELEASE'
+    implementation 'org.springframework.boot:spring-boot-starter-security:2.2.5.RELEASE'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf:2.2.5.RELEASE'
+    implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity4:3.0.4.RELEASE'
+    implementation 'org.thymeleaf.extras:thymeleaf-extras-java8time:3.0.4.RELEASE'
+    implementation 'org.springframework.boot:spring-boot-starter-jdbc:2.2.5.RELEASE'
+    implementation 'org.postgresql:postgresql:42.2.9'
+    implementation 'org.flywaydb:flyway-core:6.3.2'
+    implementation 'org.springframework.boot:spring-boot-starter-mail:2.2.5.RELEASE'
+    implementation 'org.springframework.boot:spring-boot-starter-quartz:2.2.5.RELEASE'
+    implementation 'com.itextpdf:itextpdf:5.5.13.1'
+    implementation 'org.apache.poi:poi:4.1.2'
+    implementation 'org.apache.poi:poi-ooxml:4.1.2'
+}

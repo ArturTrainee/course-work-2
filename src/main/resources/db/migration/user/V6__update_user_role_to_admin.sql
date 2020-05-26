@@ -1,0 +1,1 @@
+UPDATE "user" SET roles = 'ADMIN' WHERE id = 0;
